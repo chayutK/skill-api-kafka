@@ -2,10 +2,10 @@ build:
 	docker compose build
 
 run:
-	docker compose up
+	docker compose up -d
 
 run-build:
-	docker compose up --build
+	docker compose up --build -d
 
 push:
 	docker compose build
@@ -15,4 +15,4 @@ push:
 	docker push ghcr.io/chayutk/kafka-consumer:latest 
 
 test:
-	cd e2e/ && npx playwright test
+	cd e2e/ && npm i -y && npx playwright test
