@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	_ "net/http/pprof"
@@ -26,6 +27,7 @@ var (
 )
 
 func init() {
+	fmt.Println(broker)
 	if len(topic) == 0 {
 		println(topic)
 		panic("no topic given to be consumed, please set the -topic flag")
@@ -39,7 +41,7 @@ func SendMessage(method string, message []byte) {
 	config.Producer.Partitioner = sarama.NewRoundRobinPartitioner
 	config.Producer.RequiredAcks = sarama.WaitForAll
 
-	producer, err := sarama.NewSyncProducer([]string{"localhost:9092", "localhost:9093", "localhost:9094"}, config)
+	producer, err := sarama.NewSyncProducer(strings.Split(broker, ","), config)
 	if err != nil {
 		log.Fatalln(err)
 	}

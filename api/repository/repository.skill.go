@@ -144,8 +144,3 @@ func (rs *repositorySkill) Delete(key string) error {
 
 	return nil
 }
-
-// func (r *repositorySkill) UpdateName(key, name string) (*schemas.Skill, error)
-// func (r *repositorySkill) UpdateDescription(key, description string) (*schemas.Skill, error)
-// func (r *repositorySkill) UpdateLogo(key, logo string) (*schemas.Skill, error)
-// func (r *repositorySkill) UpdateTags(key string, tags []string) (*schemas.Skill, error)

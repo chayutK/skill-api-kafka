@@ -15,6 +15,6 @@ func Sync() *sql.DB {
 		fmt.Printf("Error while connnecting to database : %s", err.Error())
 		log.Fatal()
 	}
-	fmt.Println("------------- Database connect successfully -----------")
+	fmt.Println("------------- Database connect successfully ------------")
 	return db
 }

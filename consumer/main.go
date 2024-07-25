@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	sarama "github.com/IBM/sarama"
@@ -13,13 +15,15 @@ import (
 	"github.com/chayutK/skill-api-kafka/comsumer/router"
 )
 
+var broker = os.Getenv("BROKER")
+
 func main() {
 	config := sarama.NewConfig()
 	// config.Version = sarama.V2_0_0_0 // specify appropriate version
 	// config.Consumer.Return.Errors = true
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
-
-	group, err := sarama.NewConsumerGroup([]string{"localhost:9092", "localhost:9093", "localhost:9094"}, "my-group", config)
+	fmt.Println(broker)
+	group, err := sarama.NewConsumerGroup(strings.Split(broker, ","), "my-group", config)
 	if err != nil {
 		panic(err)
 	}
