@@ -16,3 +16,6 @@ push:
 
 test:
 	cd e2e/ && npm i -y && npx playwright test
+
+down:
+	docker compose down
