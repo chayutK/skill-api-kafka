@@ -91,7 +91,7 @@ services:
       - TOPIC=${TOPIC}
       - BROKER=${BROKER}
     build:
-      context: /api
+      context: ./api
       dockerfile: Dockerfile
     image: skill-api:latest
     ports:
@@ -111,7 +111,7 @@ services:
       - TOPIC=${TOPIC}
       - BROKER=${BROKER}
     build:
-      context: /consumer
+      context: ./consumer
       dockerfile: Dockerfile
     image: kafka-consumer
     # depends_on:
