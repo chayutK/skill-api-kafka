@@ -15,6 +15,14 @@
 # https://docs.gitlab.com/ee/development/cicd/templates.html
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - apk update
+    - apk add make
+    - apk add --update nodejs npm
 
 stages:          # List of stages for jobs, and their order of execution
   - build
@@ -23,12 +31,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
-  image: docker:24.0.5
-  services:
-    - docker:24.0.5-dind
   script:
-    - apk update
-    - apk add make
     - make build
 
 unit-test-job:   # This job runs in the test stage.
