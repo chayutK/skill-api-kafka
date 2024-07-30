@@ -15,6 +15,8 @@ services:
       timeout: 5s
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    profiles:
+      - app
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -23,6 +25,8 @@ services:
       ZOOKEEPER_SERVER_ID: 1
     ports:
       - "2181:2181"
+    profiles:
+      - app
 
   kafka-1:
     image: confluentinc/cp-kafka:latest
@@ -38,6 +42,8 @@ services:
     depends_on:
       - zookeeper
     restart: always
+    profiles:
+      - app
 
   kafka-2:
     image: confluentinc/cp-kafka:latest
@@ -53,6 +59,8 @@ services:
     depends_on:
       - zookeeper
     restart: always
+    profiles:
+      - app
 
   kafka-3:
     image: confluentinc/cp-kafka:latest
@@ -68,6 +76,8 @@ services:
     depends_on:
       - zookeeper
     restart: always
+    profiles:
+      - app
 
   kafka-ui:
     container_name: kafka-cluster-ui
@@ -84,6 +94,8 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'  # not necessary, added for tests
       KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED: 'true'
       KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED: 'true'
+    profiles:
+      - app
 
   skill-kafka-api:
     container_name: skill-api
@@ -101,7 +113,8 @@ services:
         condition: service_healthy
       kafka-ui:
         condition: service_started
-
+    profiles:
+      - app
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -128,6 +141,8 @@ services:
     depends_on:
       - skill-kafka-api
     restart: always
+    profiles:
+      - app
 
   api-tester:
     container_name: api-tester
@@ -137,16 +152,9 @@ services:
       context: ./e2e
       dockerfile: Dockerfile
     image: api-tester
-    depends_on:
-      - start_dependencies
     # command: ["sleep", "20"]
-  
-  start_dependencies:
-    image: dadarek/wait-for-dependencies
-    depends_on:
-      - skill-kafka-api
-      - postgres
-    command: skill-kafka-api:8000 postgres:5432
-    
+    profiles:
+      - test
+
 
 
