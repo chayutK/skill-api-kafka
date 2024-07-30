@@ -5,6 +5,12 @@ services:
       POSTGRES_USER : "${POSTGRES_USER}"
       POSTGRES_PASSWORD : "${POSTGRES_PASSWORD}"
       POSTGRES_DB : "${POSTGRES_DB}"
+    # healthcheck:
+    #   # test: ["CMD-SHELL", "pg_isready -U postgres -P P@ssw0rd -d skill-api"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 20
+    #   start_period: 30s
     ports:
       - '5432:5432'
     volumes:
@@ -90,15 +96,17 @@ services:
       - POSTGRES_URI=${POSTGRES_URI}
       - TOPIC=${TOPIC}
       - BROKER=${BROKER}
+    depends_on:
+      - postgres
+
     build:
       context: ./api
       dockerfile: Dockerfile
     image: skill-api:latest
     ports:
       - 8000:8000
-    depends_on:
-      - "postgres"
     tty: true
+    restart: always
 
   kafka-consumer:
     container_name: consumer-1
@@ -119,3 +127,16 @@ services:
     #   - kafka-2
     #   - kafka-3
     restart: always
+
+  api-tester:
+    container_name: api-tester
+    environment:
+      - API_URL=${API_URL}
+    build:
+      context: ./e2e
+      dockerfile: Dockerfile
+    image: api-tester
+    depends_on:
+      - kafka-consumer
+
+

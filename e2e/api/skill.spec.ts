@@ -1,9 +1,11 @@
 import { test, expect } from "@playwright/test";
+import dotenv from "dotenv"
+dotenv.config()
 
 test("should response one skill when request POST /api/v1/skills", async ({
 	request,
 }) => {
-	const reps = await request.post("/api/v1/skills", {
+	const reps = await request.post("http://" + process.env.API_URL + ":8000" +"/api/v1/skills", {
 		data: {
 			key: "python",
 			name: "Python",
