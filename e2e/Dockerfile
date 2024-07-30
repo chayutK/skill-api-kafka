@@ -4,4 +4,4 @@ COPY . .
 
 RUN npm i -y
 
-ENTRYPOINT [ "npx","playwright","test" ]
+ENTRYPOINT ["/bin/sh","-c","sleep 40 && npx playwright test"]

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -33,11 +32,11 @@ func NewServiceSkill(r repository.RepositorySkill) *serviceSkill {
 
 func (ss *serviceSkill) GetByKey(ctx *gin.Context) {
 	key := ctx.Param("key")
-	fmt.Println(key)
 	if key == "" {
 		ctx.JSON(http.StatusBadRequest, errs.BadRequestError())
 		return
 	}
+
 	skill, err := ss.repository.GetByKey(key)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, errs.NotFoundError())

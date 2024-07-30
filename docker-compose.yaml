@@ -5,14 +5,14 @@ services:
       POSTGRES_USER : "${POSTGRES_USER}"
       POSTGRES_PASSWORD : "${POSTGRES_PASSWORD}"
       POSTGRES_DB : "${POSTGRES_DB}"
-    # healthcheck:
-    #   # test: ["CMD-SHELL", "pg_isready -U postgres -P P@ssw0rd -d skill-api"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 20
-    #   start_period: 30s
     ports:
       - '5432:5432'
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "skill-api"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
@@ -97,7 +97,10 @@ services:
       - TOPIC=${TOPIC}
       - BROKER=${BROKER}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      kafka-ui:
+        condition: service_started
 
     build:
       context: ./api
@@ -122,10 +125,8 @@ services:
       context: ./consumer
       dockerfile: Dockerfile
     image: kafka-consumer
-    # depends_on:
-    #   - kafka-1
-    #   - kafka-2
-    #   - kafka-3
+    depends_on:
+      - skill-kafka-api
     restart: always
 
   api-tester:
@@ -137,6 +138,15 @@ services:
       dockerfile: Dockerfile
     image: api-tester
     depends_on:
-      - kafka-consumer
+      - start_dependencies
+    # command: ["sleep", "20"]
+  
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - skill-kafka-api
+      - postgres
+    command: skill-kafka-api:8000 postgres:5432
+    
 
 
